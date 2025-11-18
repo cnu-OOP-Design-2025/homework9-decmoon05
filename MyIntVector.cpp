@@ -1,12 +1,14 @@
 #include <iostream>
 #include <list>
+#include <string>       // testVector의 name 파라미터를 위해 추가
+#include <stdexcept>    // out_of_range 예외를 위해 추가
 using namespace std;
 
 class MyIntVector {
 private:
-    int* data;           // 동적 배열을 가리키는 포인터
-    size_t capacity;     // 현재 할당된 배열 크기
-    size_t length;       // 실제 저장된 요소 개수
+    int* data;       // 동적 배열을 가리키는 포인터
+    size_t capacity; // 현재 할당된 배열 크기
+    size_t length;   // 실제 저장된 요소 개수
 
     void resize() {
         cout << "Resize: " << capacity << " -> " << capacity * 2 << endl;
@@ -14,6 +16,20 @@ private:
         /* TODO */
         // capacity의 크기를 2배로 늘리고, 새로운 배열을 생성하세요.
         // 기존 데이터를 새로운 배열로 복사한 뒤, 기존 배열을 해제하세요.
+        size_t new_capacity = capacity * 2;
+        int* new_data = new int[new_capacity];
+
+        // 기존 데이터 복사
+        for (size_t i = 0; i < length; ++i) {
+            new_data[i] = data[i];
+        }
+
+        // 기존 배열 해제
+        delete[] data;
+
+        // data 포인터와 capacity 업데이트
+        data = new_data;
+        capacity = new_capacity;
     }
 
 public:
@@ -22,19 +38,25 @@ public:
     MyIntVector() : capacity(2), length(0) {
         /* TODO */
         // data는 capacity 크기의 배열을 동적 할당하세요.
+        data = new int[capacity];
     }
 
     ~MyIntVector() {
         /* TODO */
         // 동적 할당된 data를 해제하세요.
+        delete[] data;
     }
 
     void push_back(const int& value) {
         /* TODO */
         // length가 capacity에 도달하면 resize()를 호출하세요.
+        if (length == capacity) {
+            resize();
+        }
 
         /* TODO */
         // 새로운 요소를 배열 끝에 추가하고 length를 증가시키세요.
+        data[length++] = value;
     }
 
     // 마지막 항목을 리턴하세요.
@@ -55,6 +77,7 @@ public:
     }
 
 };
+
 void testVector(const string& name, std::list<int> values) {
 
     cout << "------------------" << endl;
@@ -75,3 +98,5 @@ int main() {
     testVector("IntVec", {1, 2, 3, 4, 5, 6});
     return 0;
 }
+
+//g++ MyIntVector.cpp -o MyIntVector --std=c++11
